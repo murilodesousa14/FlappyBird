@@ -1,6 +1,4 @@
-#ifndef GAME_ENGINE_HPP
-#define GAME_ENGINE_HPP
-
+#pragma once
 #include <opencv2/opencv.hpp>
 #include <opencv2/freetype.hpp>
 #include <vector>
@@ -279,5 +277,3 @@ public:
         }
     }
 };
-
-#endif
