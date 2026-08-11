@@ -1,6 +1,4 @@
-#ifndef PIPE_MANAGER_HPP
-#define PIPE_MANAGER_HPP
-
+#pragma once
 #include <opencv2/opencv.hpp>
 #include <cstdlib>
 
@@ -121,5 +119,3 @@ public:
         return false;
     }
 };
-
-#endif
