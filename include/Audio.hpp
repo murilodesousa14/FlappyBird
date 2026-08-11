@@ -1,6 +1,4 @@
-#ifndef AUDIO_HPP
-#define AUDIO_HPP
-
+#pragma once
 #include <cstdlib>
 #include <thread>
 
@@ -29,5 +27,3 @@ inline void playDieSound() {
         }
     }).detach();
 }
-
-#endif
