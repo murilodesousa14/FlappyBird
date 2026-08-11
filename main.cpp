@@ -8,7 +8,9 @@
 #include <thread>
 
 using namespace std;
+using namespace cv;
 
+// Função para reproduzir o som de PONTO em segundo plano
 void playPointSound()
 {
     thread([]()
@@ -23,6 +25,7 @@ void playPointSound()
         .detach();
 }
 
+// Função para reproduzir o som de GAME OVER em segundo plano
 void playDieSound()
 {
     thread([]()
@@ -37,6 +40,7 @@ void playDieSound()
         .detach();
 }
 
+// Estado do Jogo
 enum GameState
 {
     MENU,
@@ -44,13 +48,14 @@ enum GameState
     GAME_OVER
 };
 
+// Variaveis globais para callback do mouse no menu
 bool mouseClicked = false;
-cv::Point mousePos(-1, -1);
+Point mousePos(-1, -1);
 
 void onMouse(int event, int x, int y, int flags, void *userdata)
 {
-    mousePos = cv::Point(x, y);
-    if (event == cv::EVENT_LBUTTONDOWN)
+    mousePos = Point(x, y);
+    if (event == EVENT_LBUTTONDOWN)
     {
         mouseClicked = true;
     }
@@ -116,10 +121,10 @@ private:
     float speed;
     bool passed;
 
-    cv::Mat pipeImgBottom;
-    cv::Mat pipeImgTop;
+    Mat pipeImgBottom;
+    Mat pipeImgTop;
 
-    void overlayImage(cv::Mat &bg, const cv::Mat &fg, cv::Point pt)
+    void overlayImage(Mat &bg, const Mat &fg, Point pt)
     {
         for (int y = 0; y < fg.rows; ++y)
         {
@@ -135,15 +140,15 @@ private:
 
                 if (fg.channels() == 4)
                 {
-                    cv::Vec4b fgPixel = fg.at<cv::Vec4b>(y, x);
+                    Vec4b fgPixel = fg.at<Vec4b>(y, x);
                     unsigned char alpha = fgPixel[3];
 
                     if (alpha > 0)
                     {
-                        cv::Vec3b &bgPixel = bg.at<cv::Vec3b>(bgY, bgX);
+                        Vec3b &bgPixel = bg.at<Vec3b>(bgY, bgX);
                         if (alpha == 255)
                         {
-                            bgPixel = cv::Vec3b(fgPixel[0], fgPixel[1], fgPixel[2]);
+                            bgPixel = Vec3b(fgPixel[0], fgPixel[1], fgPixel[2]);
                         }
                         else
                         {
@@ -156,7 +161,7 @@ private:
                 }
                 else
                 {
-                    bg.at<cv::Vec3b>(bgY, bgX) = fg.at<cv::Vec3b>(y, x);
+                    bg.at<Vec3b>(bgY, bgX) = fg.at<Vec3b>(y, x);
                 }
             }
         }
@@ -167,16 +172,16 @@ public:
 
     bool loadTexture()
     {
-        pipeImgBottom = cv::imread("pipe.png", cv::IMREAD_UNCHANGED);
+        pipeImgBottom = imread("pipe.png", IMREAD_UNCHANGED);
         if (pipeImgBottom.empty())
             return false;
 
         if (pipeImgBottom.channels() == 3)
         {
-            cv::cvtColor(pipeImgBottom, pipeImgBottom, cv::COLOR_BGR2BGRA);
+            cvtColor(pipeImgBottom, pipeImgBottom, COLOR_BGR2BGRA);
         }
 
-        cv::flip(pipeImgBottom, pipeImgTop, 0);
+        flip(pipeImgBottom, pipeImgTop, 0);
         return true;
     }
 
@@ -202,7 +207,7 @@ public:
 
     void increaseSpeed() { speed += 0.3f; }
 
-    void draw(cv::Mat &frame)
+    void draw(Mat &frame)
     {
         int x = static_cast<int>(pipeX);
 
@@ -211,31 +216,31 @@ public:
             int topHeight = gapY;
             if (topHeight > 0)
             {
-                cv::Mat resizedTop;
-                cv::resize(pipeImgTop, resizedTop, cv::Size(pipeWidth, topHeight));
-                overlayImage(frame, resizedTop, cv::Point(x, 0));
+                Mat resizedTop;
+                resize(pipeImgTop, resizedTop, Size(pipeWidth, topHeight));
+                overlayImage(frame, resizedTop, Point(x, 0));
             }
 
             int bottomY = gapY + gapHeight;
             int bottomHeight = frame.rows - bottomY;
             if (bottomHeight > 0)
             {
-                cv::Mat resizedBottom;
-                cv::resize(pipeImgBottom, resizedBottom, cv::Size(pipeWidth, bottomHeight));
-                overlayImage(frame, resizedBottom, cv::Point(x, bottomY));
+                Mat resizedBottom;
+                resize(pipeImgBottom, resizedBottom, Size(pipeWidth, bottomHeight));
+                overlayImage(frame, resizedBottom, Point(x, bottomY));
             }
         }
         else
         {
-            cv::rectangle(frame, cv::Point(x, 0), cv::Point(x + pipeWidth, gapY), cv::Scalar(0, 200, 0), -1);
-            cv::rectangle(frame, cv::Point(x, gapY + gapHeight), cv::Point(x + pipeWidth, frame.rows), cv::Scalar(0, 200, 0), -1);
+            rectangle(frame, Point(x, 0), Point(x + pipeWidth, gapY), Scalar(0, 200, 0), -1);
+            rectangle(frame, Point(x, gapY + gapHeight), Point(x + pipeWidth, frame.rows), Scalar(0, 200, 0), -1);
         }
     }
 
-    bool checkCollision(const cv::Rect &birdBox)
+    bool checkCollision(const Rect &birdBox)
     {
-        cv::Rect topPipe(static_cast<int>(pipeX), 0, pipeWidth, gapY);
-        cv::Rect bottomPipe(static_cast<int>(pipeX), gapY + gapHeight, pipeWidth, 1000);
+        Rect topPipe(static_cast<int>(pipeX), 0, pipeWidth, gapY);
+        Rect bottomPipe(static_cast<int>(pipeX), gapY + gapHeight, pipeWidth, 1000);
         return (birdBox & topPipe).area() > 0 || (birdBox & bottomPipe).area() > 0;
     }
 
@@ -256,26 +261,26 @@ public:
 class GameEngine
 {
 private:
-    cv::CascadeClassifier faceCascade;
+    CascadeClassifier faceCascade;
     ScoreManager scoreMgr;
     PipeManager pipeMgr;
 
-    cv::Ptr<cv::freetype::FreeType2> ft2;
+    Ptr<freetype::FreeType2> ft2;
     bool hasCustomFont;
 
-    cv::Mat bgImage;
+    Mat bgImage;
 
-    vector<cv::Mat> birdFrames;
+    vector<Mat> birdFrames;
     int animFrameIndex;
     int animTimer;
 
-    cv::Point2f smoothBirdPos;
+    Point2f smoothBirdPos;
     float alphaSmooth;
 
     int currentScore;
     GameState currentState;
 
-    void overlayImage(cv::Mat &bg, const cv::Mat &fg, cv::Point pt)
+    void overlayImage(Mat &bg, const Mat &fg, Point pt)
     {
         for (int y = 0; y < fg.rows; ++y)
         {
@@ -289,15 +294,15 @@ private:
                 if (bgX < 0 || bgX >= bg.cols)
                     continue;
 
-                cv::Vec4b fgPixel = fg.at<cv::Vec4b>(y, x);
+                Vec4b fgPixel = fg.at<Vec4b>(y, x);
                 unsigned char alpha = fgPixel[3];
 
                 if (alpha > 0)
                 {
-                    cv::Vec3b &bgPixel = bg.at<cv::Vec3b>(bgY, bgX);
+                    Vec3b &bgPixel = bg.at<Vec3b>(bgY, bgX);
                     if (alpha == 255)
                     {
-                        bgPixel = cv::Vec3b(fgPixel[0], fgPixel[1], fgPixel[2]);
+                        bgPixel = Vec3b(fgPixel[0], fgPixel[1], fgPixel[2]);
                     }
                     else
                     {
@@ -311,37 +316,37 @@ private:
         }
     }
 
-    void drawText(cv::Mat &frame, const string &text, cv::Point pos, int fontSize, cv::Scalar color)
+    void drawText(Mat &frame, const string &text, Point pos, int fontSize, Scalar color)
     {
         if (hasCustomFont)
         {
-            ft2->putText(frame, text, pos, fontSize, color, -1, cv::LINE_AA, true);
+            ft2->putText(frame, text, pos, fontSize, color, -1, LINE_AA, true);
         }
         else
         {
-            cv::putText(frame, text, pos, cv::FONT_HERSHEY_SIMPLEX, fontSize / 28.0, color, 2);
+            putText(frame, text, pos, FONT_HERSHEY_SIMPLEX, fontSize / 28.0, color, 2);
         }
     }
 
-    void drawCenteredText(cv::Mat &frame, const string &text, int y, int fontSize, cv::Scalar color)
+    void drawCenteredText(Mat &frame, const string &text, int y, int fontSize, Scalar color)
     {
         int textWidth = 0;
 
         if (hasCustomFont)
         {
             int baseLine = 0;
-            cv::Size textSize = ft2->getTextSize(text, fontSize, -1, &baseLine);
+            Size textSize = ft2->getTextSize(text, fontSize, -1, &baseLine);
             textWidth = textSize.width;
         }
         else
         {
             int baseLine = 0;
-            cv::Size textSize = cv::getTextSize(text, cv::FONT_HERSHEY_SIMPLEX, fontSize / 28.0, 2, &baseLine);
+            Size textSize = getTextSize(text, FONT_HERSHEY_SIMPLEX, fontSize / 28.0, 2, &baseLine);
             textWidth = textSize.width;
         }
 
         int x = (frame.cols - textWidth) / 2;
-        drawText(frame, text, cv::Point(x, y), fontSize, color);
+        drawText(frame, text, Point(x, y), fontSize, color);
     }
 
 public:
@@ -353,11 +358,11 @@ public:
         faceCascade.load("haarcascade_frontalface_default.xml");
         pipeMgr.loadTexture();
 
-        bgImage = cv::imread("background.png");
+        bgImage = imread("background.png");
 
         try
         {
-            ft2 = cv::freetype::createFreeType2();
+            ft2 = freetype::createFreeType2();
             ft2->loadFontData("04b_19.ttf", 0);
             hasCustomFont = true;
             cout << "[INFO] Fonte 04b_19 carregada com sucesso!" << endl;
@@ -368,13 +373,13 @@ public:
             hasCustomFont = false;
         }
 
-        cv::Mat spriteSheet = cv::imread("bird.png", cv::IMREAD_UNCHANGED);
+        Mat spriteSheet = imread("bird.png", IMREAD_UNCHANGED);
         if (spriteSheet.empty())
         {
             for (int i = 0; i < 3; ++i)
             {
-                cv::Mat frameImg(45, 45, CV_8UC4, cv::Scalar(0, 0, 0, 0));
-                cv::circle(frameImg, cv::Point(22, 22), 20 - (i * 2), cv::Scalar(0, 255, 255, 255), -1);
+                Mat frameImg(45, 45, CV_8UC4, Scalar(0, 0, 0, 0));
+                circle(frameImg, Point(22, 22), 20 - (i * 2), Scalar(0, 255, 255, 255), -1);
                 birdFrames.push_back(frameImg);
             }
         }
@@ -382,7 +387,7 @@ public:
         {
             if (spriteSheet.channels() == 3)
             {
-                cv::cvtColor(spriteSheet, spriteSheet, cv::COLOR_BGR2BGRA);
+                cvtColor(spriteSheet, spriteSheet, COLOR_BGR2BGRA);
             }
 
             int singleWidth = spriteSheet.cols / 3;
@@ -390,62 +395,62 @@ public:
 
             for (int i = 0; i < 3; ++i)
             {
-                cv::Rect cropRegion(i * singleWidth, 0, singleWidth, singleHeight);
-                cv::Mat frameCrop = spriteSheet(cropRegion).clone();
-                cv::resize(frameCrop, frameCrop, cv::Size(48, 36));
+                Rect cropRegion(i * singleWidth, 0, singleWidth, singleHeight);
+                Mat frameCrop = spriteSheet(cropRegion).clone();
+                resize(frameCrop, frameCrop, Size(48, 36));
                 birdFrames.push_back(frameCrop);
             }
         }
         return true;
     }
 
-    void drawBgTexture(cv::Mat &frame, int screenWidth, int screenHeight)
+    void drawBgTexture(Mat &frame, int screenWidth, int screenHeight)
     {
         if (!bgImage.empty())
         {
-            cv::resize(bgImage, frame, cv::Size(screenWidth, screenHeight));
+            resize(bgImage, frame, Size(screenWidth, screenHeight));
         }
         else
         {
-            frame = cv::Mat(screenHeight, screenWidth, CV_8UC3, cv::Scalar(40, 40, 40));
+            frame = Mat(screenHeight, screenWidth, CV_8UC3, Scalar(40, 40, 40));
         }
     }
 
     void run()
     {
-        cv::VideoCapture cap(0);
+        VideoCapture cap(0);
         bool useRealWebcam = cap.isOpened();
 
         int screenWidth = 640;
         int screenHeight = 480;
         pipeMgr.reset(screenWidth, screenHeight);
 
-        smoothBirdPos = cv::Point2f(screenWidth / 4.0f, screenHeight / 2.0f);
+        smoothBirdPos = Point2f(screenWidth / 4.0f, screenHeight / 2.0f);
 
         string winName = "Flappy Bird - Visao Computacional";
-        cv::namedWindow(winName, cv::WINDOW_AUTOSIZE);
-        cv::setMouseCallback(winName, onMouse, NULL);
+        namedWindow(winName, WINDOW_AUTOSIZE);
+        setMouseCallback(winName, onMouse, NULL);
 
         while (true)
         {
-            cv::Mat frame;
+            Mat frame;
 
             if (currentState == PLAYING && useRealWebcam)
             {
                 cap >> frame;
                 if (!frame.empty())
                 {
-                    cv::flip(frame, frame, 1);
-                    cv::resize(frame, frame, cv::Size(screenWidth, screenHeight));
+                    flip(frame, frame, 1);
+                    resize(frame, frame, Size(screenWidth, screenHeight));
                 }
             }
 
             if (frame.empty())
             {
-                frame = cv::Mat(screenHeight, screenWidth, CV_8UC3, cv::Scalar(40, 40, 40));
+                frame = Mat(screenHeight, screenWidth, CV_8UC3, Scalar(40, 40, 40));
             }
 
-            int key = cv::waitKey(30);
+            int key = waitKey(30);
             if (key == 27)
                 break;
 
@@ -457,22 +462,22 @@ public:
                 drawBgTexture(frame, screenWidth, screenHeight);
                 scoreMgr.loadHighScore();
 
-                drawCenteredText(frame, "Flappy Bird", 120, 42, cv::Scalar(0, 200, 255));
+                drawCenteredText(frame, "Flappy Bird", 120, 42, Scalar(0, 200, 255));
 
                 int btnW = 160;
                 int btnH = 60;
                 int btnX = (screenWidth - btnW) / 2;
                 int btnY = 210;
-                cv::Rect playBtn(btnX, btnY, btnW, btnH);
+                Rect playBtn(btnX, btnY, btnW, btnH);
 
                 bool isHovered = playBtn.contains(mousePos);
-                cv::Scalar btnColor = isHovered ? cv::Scalar(0, 230, 0) : cv::Scalar(0, 180, 0);
+                Scalar btnColor = isHovered ? Scalar(0, 230, 0) : Scalar(0, 180, 0);
 
-                cv::rectangle(frame, playBtn, btnColor, -1);
-                cv::rectangle(frame, playBtn, cv::Scalar(0, 100, 0), 3);
-                drawCenteredText(frame, "PLAY", btnY + 42, 28, cv::Scalar(255, 255, 255));
+                rectangle(frame, playBtn, btnColor, -1);
+                rectangle(frame, playBtn, Scalar(0, 100, 0), 3);
+                drawCenteredText(frame, "PLAY", btnY + 42, 28, Scalar(255, 255, 255));
 
-                drawCenteredText(frame, "Maior Pontuacao: " + to_string(scoreMgr.getHighScore()), 330, 20, cv::Scalar(255, 255, 255));
+                drawCenteredText(frame, "Maior Pontuacao: " + to_string(scoreMgr.getHighScore()), 330, 20, Scalar(255, 255, 255));
 
                 if ((mouseClicked && isHovered) || key == 32 || key == 13)
                 {
@@ -488,10 +493,10 @@ public:
             {
                 if (useRealWebcam && !faceCascade.empty())
                 {
-                    cv::Mat grayFrame;
-                    cv::cvtColor(frame, grayFrame, cv::COLOR_BGR2GRAY);
-                    vector<cv::Rect> faces;
-                    faceCascade.detectMultiScale(grayFrame, faces, 1.1, 4, 0, cv::Size(60, 60));
+                    Mat grayFrame;
+                    cvtColor(frame, grayFrame, COLOR_BGR2GRAY);
+                    vector<Rect> faces;
+                    faceCascade.detectMultiScale(grayFrame, faces, 1.1, 4, 0, Size(60, 60));
 
                     if (!faces.empty())
                     {
@@ -506,10 +511,10 @@ public:
                     animFrameIndex = (animFrameIndex + 1) % birdFrames.size();
                 }
 
-                cv::Mat currentBirdImg = birdFrames[animFrameIndex];
-                cv::Rect birdBox(static_cast<int>(smoothBirdPos.x) - currentBirdImg.cols / 2,
-                                 static_cast<int>(smoothBirdPos.y) - currentBirdImg.rows / 2,
-                                 currentBirdImg.cols, currentBirdImg.rows);
+                Mat currentBirdImg = birdFrames[animFrameIndex];
+                Rect birdBox(static_cast<int>(smoothBirdPos.x) - currentBirdImg.cols / 2,
+                             static_cast<int>(smoothBirdPos.y) - currentBirdImg.rows / 2,
+                             currentBirdImg.cols, currentBirdImg.rows);
 
                 pipeMgr.update(screenWidth, screenHeight);
 
@@ -526,15 +531,15 @@ public:
                 if (pipeMgr.checkCollision(birdBox) || smoothBirdPos.y <= 0 || smoothBirdPos.y >= screenHeight)
                 {
                     currentState = GAME_OVER;
-                    playDieSound(); // <--- Toca o arquivo die.wav
+                    playDieSound();
                     scoreMgr.saveHighScore(currentScore);
                 }
 
                 pipeMgr.draw(frame);
-                overlayImage(frame, currentBirdImg, cv::Point(birdBox.x, birdBox.y));
+                overlayImage(frame, currentBirdImg, Point(birdBox.x, birdBox.y));
 
-                drawText(frame, "Pontos: " + to_string(currentScore), cv::Point(20, 45), 22, cv::Scalar(255, 255, 255));
-                drawText(frame, "Recorde: " + to_string(scoreMgr.getHighScore()), cv::Point(20, 75), 22, cv::Scalar(0, 255, 255));
+                drawText(frame, "Pontos: " + to_string(currentScore), Point(20, 45), 22, Scalar(255, 255, 255));
+                drawText(frame, "Recorde: " + to_string(scoreMgr.getHighScore()), Point(20, 75), 22, Scalar(0, 255, 255));
             }
             // ==========================================
             // TELA 3: GAME OVER
@@ -543,8 +548,8 @@ public:
             {
                 drawBgTexture(frame, screenWidth, screenHeight);
 
-                drawCenteredText(frame, "GAME OVER", screenHeight / 2 - 20, 32, cv::Scalar(0, 0, 255));
-                drawCenteredText(frame, "Pressione 'R' para Reiniciar ou 'M' para o Menu", screenHeight / 2 + 25, 14, cv::Scalar(255, 255, 255));
+                drawCenteredText(frame, "GAME OVER", screenHeight / 2 - 20, 32, Scalar(0, 0, 255));
+                drawCenteredText(frame, "Pressione 'R' para Reiniciar ou 'M' para o Menu", screenHeight / 2 + 25, 14, Scalar(255, 255, 255));
 
                 if (key == 'r' || key == 'R')
                 {
@@ -559,7 +564,7 @@ public:
             }
 
             mouseClicked = false;
-            cv::imshow(winName, frame);
+            imshow(winName, frame);
         }
     }
 };
