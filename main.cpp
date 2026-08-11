@@ -7,11 +7,12 @@
 #include <cstdlib>
 #include <thread>
 
-// Função para reproduzir o som de PONTO em segundo plano
+using namespace std;
+
 void playPointSound()
 {
-    std::thread([]()
-                {
+    thread([]()
+           {
         int res = system("paplay point.wav > /dev/null 2>&1");
         if (res != 0) {
             res = system("canberra-gtk-play -f point.wav > /dev/null 2>&1");
@@ -22,11 +23,10 @@ void playPointSound()
         .detach();
 }
 
-// Função para reproduzir o som de GAME OVER em segundo plano
 void playDieSound()
 {
-    std::thread([]()
-                {
+    thread([]()
+           {
         int res = system("paplay die.wav > /dev/null 2>&1");
         if (res != 0) {
             res = system("canberra-gtk-play -f die.wav > /dev/null 2>&1");
@@ -64,18 +64,18 @@ void onMouse(int event, int x, int y, int flags, void *userdata)
 class ScoreManager
 {
 private:
-    std::string filename;
+    string filename;
     int highScore;
 
 public:
-    ScoreManager(const std::string &file = "highscore.txt") : filename(file), highScore(0)
+    ScoreManager(const string &file = "highscore.txt") : filename(file), highScore(0)
     {
         loadHighScore();
     }
 
     int loadHighScore()
     {
-        std::ifstream inFile(filename);
+        ifstream inFile(filename);
         if (inFile.is_open())
         {
             inFile >> highScore;
@@ -93,7 +93,7 @@ public:
         if (score > highScore)
         {
             highScore = score;
-            std::ofstream outFile(filename);
+            ofstream outFile(filename);
             if (outFile.is_open())
             {
                 outFile << highScore;
@@ -267,7 +267,7 @@ private:
 
     cv::Mat bgImage;
 
-    std::vector<cv::Mat> birdFrames;
+    vector<cv::Mat> birdFrames;
     int animFrameIndex;
     int animTimer;
 
@@ -313,7 +313,7 @@ private:
         }
     }
 
-    void drawText(cv::Mat &frame, const std::string &text, cv::Point pos, int fontSize, cv::Scalar color)
+    void drawText(cv::Mat &frame, const string &text, cv::Point pos, int fontSize, cv::Scalar color)
     {
         if (hasCustomFont)
         {
@@ -325,7 +325,7 @@ private:
         }
     }
 
-    void drawCenteredText(cv::Mat &frame, const std::string &text, int y, int fontSize, cv::Scalar color)
+    void drawCenteredText(cv::Mat &frame, const string &text, int y, int fontSize, cv::Scalar color)
     {
         int textWidth = 0;
 
@@ -362,11 +362,11 @@ public:
             ft2 = cv::freetype::createFreeType2();
             ft2->loadFontData("04b_19.ttf", 0);
             hasCustomFont = true;
-            std::cout << "[INFO] Fonte 04b_19 carregada com sucesso!" << std::endl;
+            cout << "[INFO] Fonte 04b_19 carregada com sucesso!" << endl;
         }
         catch (...)
         {
-            std::cout << "[AVISO] '04b_19.ttf' nao encontrada. Usando fonte padrao..." << std::endl;
+            cout << "[AVISO] '04b_19.ttf' nao encontrada. Usando fonte padrao..." << endl;
             hasCustomFont = false;
         }
 
@@ -424,7 +424,7 @@ public:
 
         smoothBirdPos = cv::Point2f(screenWidth / 4.0f, screenHeight / 2.0f);
 
-        std::string winName = "Flappy Bird - Visao Computacional";
+        string winName = "Flappy Bird - Visao Computacional";
         cv::namedWindow(winName, cv::WINDOW_AUTOSIZE);
         cv::setMouseCallback(winName, onMouse, NULL);
 
@@ -474,7 +474,7 @@ public:
                 cv::rectangle(frame, playBtn, cv::Scalar(0, 100, 0), 3);
                 drawCenteredText(frame, "PLAY", btnY + 42, 28, cv::Scalar(255, 255, 255));
 
-                drawCenteredText(frame, "Maior Pontuacao: " + std::to_string(scoreMgr.getHighScore()), 330, 20, cv::Scalar(255, 255, 255));
+                drawCenteredText(frame, "Maior Pontuacao: " + to_string(scoreMgr.getHighScore()), 330, 20, cv::Scalar(255, 255, 255));
 
                 if ((mouseClicked && isHovered) || key == 32 || key == 13)
                 {
@@ -492,7 +492,7 @@ public:
                 {
                     cv::Mat grayFrame;
                     cv::cvtColor(frame, grayFrame, cv::COLOR_BGR2GRAY);
-                    std::vector<cv::Rect> faces;
+                    vector<cv::Rect> faces;
                     faceCascade.detectMultiScale(grayFrame, faces, 1.1, 4, 0, cv::Size(60, 60));
 
                     if (!faces.empty())
@@ -535,8 +535,8 @@ public:
                 pipeMgr.draw(frame);
                 overlayImage(frame, currentBirdImg, cv::Point(birdBox.x, birdBox.y));
 
-                drawText(frame, "Pontos: " + std::to_string(currentScore), cv::Point(20, 45), 22, cv::Scalar(255, 255, 255));
-                drawText(frame, "Recorde: " + std::to_string(scoreMgr.getHighScore()), cv::Point(20, 75), 22, cv::Scalar(0, 255, 255));
+                drawText(frame, "Pontos: " + to_string(currentScore), cv::Point(20, 45), 22, cv::Scalar(255, 255, 255));
+                drawText(frame, "Recorde: " + to_string(scoreMgr.getHighScore()), cv::Point(20, 75), 22, cv::Scalar(0, 255, 255));
             }
             // ==========================================
             // TELA 3: GAME OVER
