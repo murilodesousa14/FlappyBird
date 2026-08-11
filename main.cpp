@@ -37,7 +37,6 @@ void playDieSound()
         .detach();
 }
 
-// Estado do Jogo
 enum GameState
 {
     MENU,
@@ -45,7 +44,6 @@ enum GameState
     GAME_OVER
 };
 
-// Variaveis globais para callback do mouse no menu
 bool mouseClicked = false;
 cv::Point mousePos(-1, -1);
 
