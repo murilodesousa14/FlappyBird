@@ -1,6 +1,4 @@
-#ifndef SCORE_MANAGER_HPP
-#define SCORE_MANAGER_HPP
-
+#pragma once
 #include <string>
 #include <fstream>
 
@@ -40,5 +38,3 @@ public:
 
     int getHighScore() const { return highScore; }
 };
-
-#endif
