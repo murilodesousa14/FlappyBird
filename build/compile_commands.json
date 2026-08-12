@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/murilo/Documentos/GitHub/FlappyBird/build",
+  "command": "/usr/bin/g++  -I/home/murilo/Documentos/GitHub/FlappyBird/include -isystem /usr/include/opencv4 -g -std=gnu++17 -o CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o -c /home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp",
+  "file": "/home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp",
+  "output": "CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o"
+}
+]

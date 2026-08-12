@@ -73,15 +73,15 @@ CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o: CMakeFiles/FlappyBirdApp.dir/flags.
 CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o: /home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp
 CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o: CMakeFiles/FlappyBirdApp.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/murilo/Documentos/GitHub/FlappyBird/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o -MF CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o.d -o CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o -c /home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o -MF CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o.d -o CMakeFiles/FlappyBirdApp.dir/src/main.cpp.o -c /home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp
 
 CMakeFiles/FlappyBirdApp.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FlappyBirdApp.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp > CMakeFiles/FlappyBirdApp.dir/src/main.cpp.i
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp > CMakeFiles/FlappyBirdApp.dir/src/main.cpp.i
 
 CMakeFiles/FlappyBirdApp.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FlappyBirdApp.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp -o CMakeFiles/FlappyBirdApp.dir/src/main.cpp.s
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/murilo/Documentos/GitHub/FlappyBird/src/main.cpp -o CMakeFiles/FlappyBirdApp.dir/src/main.cpp.s
 
 # Object files for target FlappyBirdApp
 FlappyBirdApp_OBJECTS = \

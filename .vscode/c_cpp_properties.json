@@ -3,16 +3,23 @@
   "configurations": [
     {
       "name": "C++17",
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
       "includePath": [
         "${workspaceFolder}/**",
         "${workspaceFolder}/include",
         "/usr/include/opencv4"
       ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/include",
+          "/usr/include/opencv4"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      },
       "compilerPath": "/usr/bin/g++",
       "cStandard": "c17",
       "cppStandard": "c++17",
-      "intelliSenseMode": "linux-gcc-x64",
-      "configurationProvider": "ms-vscode.cmake-tools"
+      "intelliSenseMode": "linux-gcc-x64"
     }
   ]
 }
