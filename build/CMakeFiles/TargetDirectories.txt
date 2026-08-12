@@ -1,0 +1,3 @@
+/home/murilo/Documentos/GitHub/FlappyBird/build/CMakeFiles/FlappyBirdApp.dir
+/home/murilo/Documentos/GitHub/FlappyBird/build/CMakeFiles/edit_cache.dir
+/home/murilo/Documentos/GitHub/FlappyBird/build/CMakeFiles/rebuild_cache.dir
