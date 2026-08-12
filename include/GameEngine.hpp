@@ -148,11 +148,9 @@ public:
             ft2 = freetype::createFreeType2();
             ft2->loadFontData("assets/fonts/04b_19.ttf", 0);
             hasCustomFont = true;
-            cout << "[INFO] Fonte 04b_19 carregada com sucesso!" << endl;
         }
         catch (...)
         {
-            cout << "[AVISO] 'assets/fonts/04b_19.ttf' nao encontrada. Usando fonte padrao..." << endl;
             hasCustomFont = false;
         }
 
@@ -198,7 +196,7 @@ public:
 
         smoothBirdPos = Point2f(screenWidth / 4.0f, screenHeight / 2.0f);
 
-        string winName = "Flappy Bird - Visao Computacional";
+        string winName = "Flappy Bird - Visão Computacional";
         namedWindow(winName, WINDOW_AUTOSIZE);
         setMouseCallback(winName, onMouse, NULL);
 
